@@ -28,13 +28,11 @@
       <div class="card-body p-0">
         <div *ngIf="myEvidenceItems.length===0" class="text-center py-4 text-muted">No evidence uploaded yet.</div>
         <table class="table table-hover mb-0" *ngIf="myEvidenceItems.length>0">
-          <thead><tr><th>ID</th><th>Task</th><th>File</th><th>Uploaded At</th><th>Status</th></tr></thead>
+          <thead><tr><th>ID</th><th>File</th><th>Status</th></tr></thead>
           <tbody>
             <tr *ngFor="let e of myEvidenceItems">
               <td>#{{ e.evidenceId }}</td>
-              <td>{{ taskDesc(e.taskId) }}</td>
               <td><a [href]="e.fileURI" target="_blank" class="text-amber">{{ e.fileURI | slice:0:40 }}…</a></td>
-              <td>{{ e.uploadedAt | slice:0:10 }}</td>
               <td><span [class]="statusClass(e.status)">{{ e.status }}</span></td>
             </tr>
           </tbody>

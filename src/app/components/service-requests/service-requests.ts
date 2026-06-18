@@ -46,7 +46,7 @@ export class ServiceRequests implements OnInit {
     private workOrderSvc: WorkOrderService,
     private http: HttpClient,
     private toast: ToastService,
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.load();
@@ -55,7 +55,7 @@ export class ServiceRequests implements OnInit {
         next: (r) => {
           this.assets = r.data ?? r;
         },
-        error: () => {},
+        error: () => { },
       });
     }
   }
@@ -164,28 +164,30 @@ export class ServiceRequests implements OnInit {
     return m[s] ?? 'badge-pending';
   }
 
-  resolve(id:number){
+  resolve(id: number) {
     this.workOrderSvc.getByRequestId(id).subscribe({
-      next: (order) => {
+      next: (response) => {
+
+        const order = response.data ?? response;
         const status = order.status;
-        if(status !== 'COMPLETED'){
+
+        if (status !== 'COMPLETED') {
           this.toast.warning('WorkOrder should be Completed to Resolve');
           return;
         }
-        this.svc.updateRequestStatusById(id, 'CLOSED').subscribe({
+
+        this.svc.resolve(id).subscribe({
           next: () => {
             this.load();
-            this.toast.success('Resolved Successful.');
+            this.toast.success('Request resolved successfully.');
           },
-          error: () => {
-            console.log('Something went wrong');
-          },
+          error: (err) => {
+            this.toast.error(extractError(err));
+          }
         });
       },
-      error:(error) => {
-        console.log(error);
-        
-        this.toast.error(extractError(error));
+      error: (err) => {
+        this.toast.error(extractError(err));
       }
     });
   }

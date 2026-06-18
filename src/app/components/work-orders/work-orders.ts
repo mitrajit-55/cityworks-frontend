@@ -58,7 +58,7 @@ export class WorkOrders implements OnInit {
     private http: HttpClient,
     private toast: ToastService,
     private requestSvc: ServiceRequestService,
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.load();
@@ -194,37 +194,26 @@ export class WorkOrders implements OnInit {
   updateInlineStatus(item: any) {
     const id = item.workOrderId;
     const newStatus = this.inlineStatusForm[id];
+
     if (newStatus === 'COMPLETED' && !this.canCompleteOrder(id)) {
       this.toast.warning(
-        'All completion evidence must be VERIFIED before marking this work order as Completed.',
+        'All completion evidence must be VERIFIED before marking this work order as Completed.'
       );
       return;
     }
+
     this.saving = true;
+
     this.svc.updateStatus(id, newStatus).subscribe({
       next: () => {
         this.saving = false;
         this.showInlineStatusForm[id] = false;
-        if (newStatus === 'COMPLETED'){
-          let requestId = 0;
-          this.svc.getById(id).subscribe({
-            next: (order) => {let workOrder = order.data;
-              requestId = workOrder.requestId;
-              this.requestSvc.updateRequestStatusById(requestId, newStatus).subscribe({
-                next: () => {
-                  console.log('Status updated successfully');
-                },
-                error: (err) => {
-                  console.error('Update failed', err);
-                },
-              });
-            },
-          });
-          
-        } this.load();
+
+        this.load();
+
         this.toast.success('Status updated successfully.');
       },
-      error: (err) => {
+      error: (err: any) => {
         this.saving = false;
         this.toast.error(extractError(err));
       },
